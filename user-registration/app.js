@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 // Configurações do MongoDB
-const mongoHost = process.env.MONGODB;
+const mongoHost = process.env.MONGODB || 'mongo';
 const mongoPort = 27017;
 const mongoDatabase = 'mydb';
 
@@ -26,7 +26,11 @@ app.post('/users', async (req, res) => {
   try {
     const { nome, idade, sexo, email } = req.body;
 
-    const client = await MongoClient.connect(`mongodb://${mongoHost}:${mongoPort}`);
+    const client = await MongoClient.connect(`mongodb://${mongoHost}:${mongoPort}`, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+    
     const db = client.db(mongoDatabase);
 
     // Verifica se o usuário já está cadastrado
